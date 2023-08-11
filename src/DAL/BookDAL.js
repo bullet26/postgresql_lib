@@ -1,36 +1,33 @@
-import { Book, Tag, Rating } from '../models/index.js';
+import { Book, Tag, Rating, Author } from '../models/index.js';
 
 const create = book => {
-    const { tags, rating } = book;
-    if (!!tags) {
-        tags = JSON.parse(tags);
-        tags.forEach(item =>
-            Tag.create({
-                title: item.title,
-                bookId: book.id,
-            })
-        );
-    }
-    if (!!rating) {
-        Rating.create({
-            rating,
-            bookId: book.id,
-        });
-    }
     return Book.create(book);
 };
 
 const findAll = ({ offset, limit, findValue }) => {
-    return Book.findAndCountAll({ where: findValue, include: [{ model: Book, as: 'books' }], limit, offset });
+    return Book.findAndCountAll({
+        where: findValue,
+        include: [
+            { model: Author, as: 'author', attributes: ['name', 'surname'] },
+            { model: Tag, as: 'tags', attributes: ['title'] },
+            { model: Rating, as: 'rating', attributes: ['rate'] },
+        ],
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        limit,
+        offset,
+        order: [['title', 'ASC']],
+    });
 };
 
 const findByID = id => {
     return Book.findOne({
         where: { id },
         include: [
-            { model: Tag, as: 'tags' },
-            { model: Rating, as: 'rating' },
+            { model: Author, as: 'author', attributes: ['name', 'surname'] },
+            { model: Tag, as: 'tags', attributes: ['title'] },
+            { model: Rating, as: 'rating', attributes: ['rate'] },
         ],
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
     });
 };
 

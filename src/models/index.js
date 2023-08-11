@@ -6,17 +6,17 @@ import { Rating } from './ratingModel.js';
 import { Tag } from './tagModel.js';
 import { sequelize } from '../config/db.js';
 
-const ReaderBook = sequelize.define('reader_book', {
+export const ReaderBook = sequelize.define('reader_book', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
-Author.hasMany(Book, { as: 'books' });
+Author.hasMany(Book);
 Book.belongsTo(Author);
 
-Book.hasOne(Rating, { as: 'rating' });
+Book.hasOne(Rating);
 Rating.belongsTo(Book);
 
-Book.hasMany(Tag, { as: 'tags' });
+Book.hasMany(Tag);
 Tag.belongsTo(Book);
 
 Reader.belongsToMany(Book, { through: ReaderBook });

@@ -1,13 +1,26 @@
 import { BookDAL } from '../DAL/BookDAL.js';
+import { Op } from 'sequelize';
 
 const create = async book => {
     const createdBook = await BookDAL.create(book);
+
     return createdBook;
 };
 
 const getAll = async query => {
     let { page, limit, ...paramsQuery } = query;
-    const findValue = { ...paramsQuery };
+    let findValue = { ...paramsQuery };
+    let { title } = findValue;
+    if (!!title) {
+        findValue = {
+            ...findValue,
+            title: {
+                [Op.substring]: title,
+            },
+        };
+        console.log(findValue);
+    }
+
     page ||= 1;
     limit ||= 50;
     const offset = page * limit - limit;
